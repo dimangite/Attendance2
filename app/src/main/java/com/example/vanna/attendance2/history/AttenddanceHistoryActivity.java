@@ -1,7 +1,7 @@
 package com.example.vanna.attendance2.history;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.vanna.attendance2.R;
+import com.example.vanna.attendance2.sqlite.DBConnector;
 
 public class AttenddanceHistoryActivity extends AppCompatActivity {
 
@@ -64,13 +65,6 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
     }
 
     private Attendance[] getAttendanceData() {
-        Attendance[] data = new Attendance[6];
-
-        for (int i = 0; i< 6; i++) {
-            Attendance attendance = new Attendance("2016/08/0" + i, "5:30 PM", Status.Present);
-            data[i] = attendance;
-        }
-
-        return data;
+        return DBConnector.getInstance(this).getAttendances();
     }
 }

@@ -79,7 +79,7 @@ public class AttendanceArrayAdapter extends RecyclerView.Adapter<AttendanceArray
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Attendance attendance = data[position];
-        holder.dateView.setText(attendance.date);
-        holder.timeView.setText(attendance.time);
+        holder.dateView.setText(attendance.getDate());
+        holder.timeView.setText(attendance.getTime());
     }
 }
