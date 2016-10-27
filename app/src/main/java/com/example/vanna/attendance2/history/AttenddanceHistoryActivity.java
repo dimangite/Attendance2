@@ -8,11 +8,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.vanna.attendance2.R;
-import com.example.vanna.attendance2.sqlite.DBConnector;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AttenddanceHistoryActivity extends AppCompatActivity {
+
+    private AttendanceArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +37,7 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
 
         // setup adapter
         Attendance[] data = getAttendanceData();
-        AttendanceArrayAdapter adapter = new AttendanceArrayAdapter(this, data);
+        adapter = new AttendanceArrayAdapter(this, data);
         adapter.setAttendanceAdapterListener(new AttendanceAdapterListener() {
             @Override
             public void onStatusClick(int position) {
@@ -38,6 +50,8 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
         // setup layout manager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        loadAttendancesFromServer();
     }
 
     private void initLayout(){
@@ -65,6 +79,38 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
     }
 
     private Attendance[] getAttendanceData() {
-        return DBConnector.getInstance(this).getAttendances();
+        //return DBConnector.getInstance(this).getAttendances();
+        return new Attendance[0];
     }
+
+    private void loadAttendancesFromServer(){
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = "https://www.dropbox.com/s/0x4pql0iayvp0er/attendance-list.json?dl=1";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("payload");
+                    Attendance[] attendances = new Attendance[jsonArray.length()];
+                    for(int i=0; i<jsonArray.length(); i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Attendance attendance = Attendance.fromJsonObject(jsonObject);
+                        attendances[i] = attendance;
+                    }
+                    adapter.setData(attendances);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AttenddanceHistoryActivity.this, "Error reading data from server.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(AttenddanceHistoryActivity.this, "Error loading data from server.", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
+
 }

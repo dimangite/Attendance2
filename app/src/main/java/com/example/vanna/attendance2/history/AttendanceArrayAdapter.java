@@ -31,6 +31,11 @@ public class AttendanceArrayAdapter extends RecyclerView.Adapter<AttendanceArray
         this.data = data;
     }
 
+    public void setData(Attendance[] data){
+        this.data = data;
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView statusView;
         TextView dateView;

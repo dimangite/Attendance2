@@ -1,5 +1,8 @@
 package com.example.vanna.attendance2.history;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by vanna on 9/8/16.
  */
@@ -14,6 +17,19 @@ public class Attendance {
         this.date = date;
         this.time = time;
         this.status = status;
+    }
+
+    public static Attendance fromJsonObject(JSONObject jsonObject){
+        try {
+            String date = jsonObject.getString("date");
+            String time = jsonObject.getString("time");
+            int status = jsonObject.getInt("status");
+            Attendance attendance = new Attendance(date, time, Status.fromOrdinal(status));
+            return attendance;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getDate() {
