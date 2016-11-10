@@ -14,7 +14,7 @@ import com.example.vanna.attendance2.sqlite.DBConnector;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton.setTypeface(typeface);
         facebookButton.setText("\ue901");
 
+        facebookButton.setOnClickListener(this);
+
+        /*
         facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +46,25 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        */
 
     }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.facebookButton){
+            // Insert attendance
+            Date date = new Date();
+            String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
+            String timeStr = new SimpleDateFormat("HH:mm:ss").format(date);
+            Attendance.Status status = Attendance.Status.Present;
+            Attendance attendance = new Attendance(dateStr, timeStr, status);
+            DBConnector.getInstance(LoginActivity.this).insertAttendance(attendance);
+
+            Intent intent = new Intent(getApplicationContext(), AttenddanceHistoryActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
 }

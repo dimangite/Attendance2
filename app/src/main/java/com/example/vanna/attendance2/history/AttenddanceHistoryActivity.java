@@ -1,6 +1,7 @@
 package com.example.vanna.attendance2.history;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,9 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AttenddanceHistoryActivity extends AppCompatActivity {
+public class AttenddanceHistoryActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private AttendanceArrayAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
         initLayout();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh_view);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         // setup adapter
         Attendance[] data = getAttendanceData();
@@ -84,12 +89,19 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
     }
 
     private void loadAttendancesFromServer(){
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url = "https://www.dropbox.com/s/0x4pql0iayvp0er/attendance-list.json?dl=1";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     JSONArray jsonArray = response.getJSONArray("payload");
                     Attendance[] attendances = new Attendance[jsonArray.length()];
@@ -108,9 +120,15 @@ public class AttenddanceHistoryActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(AttenddanceHistoryActivity.this, "Error loading data from server.", Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
         requestQueue.add(jsonObjectRequest);
     }
 
+    @Override
+    public void onRefresh() {
+        // do anything maybe check for update, ....
+        swipeRefreshLayout.setRefreshing(false);
+    }
 }

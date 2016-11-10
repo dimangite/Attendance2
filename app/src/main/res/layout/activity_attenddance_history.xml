@@ -4,58 +4,61 @@
     android:id="@+id/activity_attenddance_history"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/app_background"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.vanna.attendance2.history.AttenddanceHistoryActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
     <RelativeLayout
-        android:orientation="vertical"
+        android:id="@+id/statusDetailLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:visibility="invisible"
-        android:id="@+id/statusDetailLayout"
-        android:background="@color/colorPrimaryDark"
         android:layout_alignParentBottom="true"
-        >
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:visibility="invisible">
 
         <TextView
-            android:text="Position: "
-            android:textSize="18sp"
+            android:id="@+id/statusDetailView"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:textColor="@color/textColor"
-            android:gravity="center"
-            android:id="@+id/statusDetailView"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="10dp"
-            />
+            android:gravity="center"
+            android:text="Position: "
+            android:textColor="@color/textColor"
+            android:textSize="18sp" />
 
         <TextView
-            android:text="X"
-            android:textSize="22sp"
+            android:id="@+id/statusClose"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/circle"
-            android:textColor="@color/textColor"
-            android:gravity="center"
-            android:id="@+id/statusClose"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp" />
+            android:background="@drawable/circle"
+            android:gravity="center"
+            android:text="X"
+            android:textColor="@color/textColor"
+            android:textSize="22sp" />
 
     </RelativeLayout>
 
 
-    </RelativeLayout>
+</RelativeLayout>
